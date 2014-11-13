@@ -1,8 +1,9 @@
-"personal
+" ENVIRONMENT SPECIFIC "
+
 " fix colors in ubuntu
 set t_Co=256
 
-" experimental stuff:
+" EXPERIMENTAL STUFF "
 
 " attempt at a good reload all
 nmap <Leader>e :bufdo e<CR>:syntax on<CR>
@@ -12,15 +13,17 @@ nmap <Leader>s :syntax on<CR>
 " turns on the mouse? wtf?
 "set mouse=a
 
+" MAPPINGS "
+
 " set leader key to space -> easiest key to hit!
 let mapleader=" " 
 
-"quick escape 
+" quick escape 
 imap jj <Esc>
 " quick save and quit in insert mode
 imap ZZ <Esc>:wq<CR>
 
-"quick save, force save, save all, save all and quit
+" quick save, force save, save all, save all and quit
 nmap <Leader>w :w<CR>
 nmap <Leader>W :w!<CR>
 nmap <Leader>a :wa<CR>
@@ -32,6 +35,12 @@ nmap <Leader>q :bd<CR>
 nmap <Leader>Q :q<CR>
 " close all windows
 nmap <Leader>QA :qa<CR>
+
+" netrw
+nmap <Leader>o :o .<CR>
+
+" browse buffers
+nmap <Leader>b :ls<CR>:b 
 
 
 " toggle numbers and paste mode
@@ -45,27 +54,23 @@ nmap Y y$
 nnoremap j gj
 nnoremap k gk
 
-"clear search hilight
-nmap <silent> <Leader>/ :nohlsearch<CR>
-
-"tabbing in visual mode
-vnoremap < <gv
-vnoremap > >gv
-
-"visual block without pasting
-nnoremap <M-v> <C-v>
-
-"fast scroll
+" fast scroll
 nnoremap <C-y> 3<C-y>
 nnoremap <C-e> 3<C-e>
 
-"browse buffers
-nmap <Leader>b :ls<CR>:b 
-
-"intuitive folding
+" intuitive folding
 nmap zl zO 
 nmap zh zC
 "maybe some intuitive min/reload all?
+
+" clear search hilight
+nmap <silent> <Leader>/ :nohlsearch<CR>
+
+" fixes tabbing in visual mode
+vnoremap < <gv
+vnoremap > >gv
+
+
 
 " tab navigation like firefox
 :nmap <C-S-tab> :tabprevious<CR>
@@ -96,16 +101,22 @@ nnoremap <silent> <C-Left> <C-w><lt><C-w><lt>
 nnoremap <silent> <C-Up> <C-w>-
 nnoremap <silent> <C-Down> <C-w>+
 
-" netrw
-nmap <Leader>o :o .<CR>
 
-" fixes for browser based ssh
+" REPLACEMENTS FOR BROWSER-BASED SSH "
 :nmap <Leader>t :tabnew<CR>
 :nmap <Leader>h :tabprevious<CR>
 :nmap <Leader>l :tabnext<CR>
 
+" equal-size windows
 :nmap <C-f>= <C-w>=
+" auto-complete
 :imap <C-,> <C-n>
+
+" visual block without pasting
+nnoremap <M-v> <C-v>
+
+
+" SETTINGS "
 
 "general
 set hidden
@@ -148,17 +159,17 @@ syntax enable
 set pastetoggle=<F12>
 set foldmethod=syntax
 
-"remove goddamn motha-fuckin scrollbars
+"remove goddamn scrollbars
 :setglobal guioptions-=L
 :setglobal guioptions-=l
 :setglobal guioptions-=R
 :setglobal guioptions-=r
 :setglobal guioptions-=b
 :setglobal guioptions-=h
-"remove motha truckin toolbar
+" I'm tired of these monkey fighting toolbars on this monday friday GUI
 :setglobal guioptions-=T
 
-" correctly interpret file types
+" correctly interpret some file types
 au BufNewFile,BufRead *.pde set filetype=c
 au BufNewFile,BufRead *.ino set filetype=c
 au BufNewFile,BufRead *.pic set filetype=ibasic
@@ -172,6 +183,5 @@ autocmd BufEnter * silent! lcd %:p:h:gs/ /\\ /
 nmap <Leader>rp :w<CR>:silent !start cmd /k python %<CR>:redraw!<CR>
 
 " LINUX SPECIFIC
-"save and run current file as python script
+"save and run current file as python script in a new window with the VENV sourced
 nmap <Leader>rp :w<CR>:silent !gnome-terminal -e "bash -ic 'source ~/bootledger/venv/bin/activate; python -i %'" <CR>:redraw!<CR>
-"nmap <Leader>rp :w<CR>:!gnome-terminal -x source ~/bootledger/venv/bin/activate && python -i %<CR>
