@@ -1,29 +1,58 @@
-" ENVIRONMENT SPECIFIC "
-
-" fix colors in ubuntu
+"pfix colors in ubuntu
 set t_Co=256
+set background=dark
+colorscheme wombat256mod
 
-" EXPERIMENTAL STUFF "
+" experimental stuff:
+" statusline things
+" show statusline always - even without splits
+set laststatus=2
+"define 3 custom highlight groups
+"http://got-ravings.blogspot.com/2008/08/vim-pr0n-making-statuslines-that-own.html
+"http://learnvimscriptthehardway.stevelosh.com/chapters/17.html
+"http://www.plainlystated.com/2009/05/vim-statusline/
 
-" attempt at a good reload all
+"hi User1 ctermbg=green ctermfg=red   guibg=green guifg=red
+"hi User2 ctermbg=red   ctermfg=blue  guibg=red   guifg=blue
+"hi User3 ctermbg=blue  ctermfg=green guibg=blue  guifg=green
+
+"set statusline+=%=   "left-right splitter
+"set statusline+=%*   "switch back to statusline highlight
+
+set statusline=
+"set statusline+=%1*  "switch to User1 highlight
+set statusline+=%F   "full filename
+"set statusline+=%2*  "switch to User2 highlight
+set statusline+=\     "space
+set statusline+=%y   "filetype
+"set statusline+=%3*  "switch to User3 highlight
+set statusline+=\     "space
+set statusline+=[%l\/%L]   "line number
+set statusline+=:%c  "Colnr
+set statusline+=\     "space
+"set statusline+=%P   "percentage thru file
+
+
+" attempt at a good reload all, not very good
 nmap <Leader>e :bufdo e<CR>:syntax on<CR>
 nmap <Leader>s :syntax on<CR>
 
-
 " turns on the mouse? wtf?
 "set mouse=a
-
-" MAPPINGS "
+" enter for newline w/out insert, <S-CR> does not work :(
+"nmap <CR> o<Esc>
+"nmap <S-CR> O<Esc>
 
 " set leader key to space -> easiest key to hit!
-let mapleader=" " 
+let mapleader=" "
 
-" quick escape 
+"quick escape
 imap jj <Esc>
 " quick save and quit in insert mode
 imap ZZ <Esc>:wq<CR>
+imap QQ <Esc>:bd<CR>
 
-" quick save, force save, save all, save all and quit
+"quick save, force save, save all, save all and quit
 nmap <Leader>w :w<CR>
 nmap <Leader>W :w!<CR>
 nmap <Leader>a :wa<CR>
@@ -34,14 +63,7 @@ nmap <Leader>q :bd<CR>
 " close the window
 nmap <Leader>Q :q<CR>
 " close all windows
-nmap <Leader>QA :qa<CR>
-
-" netrw
-nmap <Leader>o :o .<CR>
-
-" browse buffers
-nmap <Leader>b :ls<CR>:b 
-
+nmap QQ :qa<CR>
 
 " toggle numbers and paste mode
 nmap <Leader>n :set number!<CR>
@@ -54,23 +76,31 @@ nmap Y y$
 nnoremap j gj
 nnoremap k gk
 
+" clear search hilight
+nmap <silent> <Leader>/ :nohlsearch<CR>
+
+" fast tabbing - there may have been some reason I didn't want this?
+nmap < <<
+nmap > >>
+" tabbing in visual mode
+vnoremap < <gv
+vnoremap > >gv
+
+" visual block without pasting
+nnoremap <M-v> <C-v>
+
 " fast scroll
 nnoremap <C-y> 3<C-y>
 nnoremap <C-e> 3<C-e>
 
-" intuitive folding
-nmap zl zO 
-nmap zh zC
-"maybe some intuitive min/reload all?
+"browse buffers nmap <Leader>b :ls<CR>:b
 
-" clear search hilight
-nmap <silent> <Leader>/ :nohlsearch<CR>
-
-" fixes tabbing in visual mode
-vnoremap < <gv
-vnoremap > >gv
-
-
+"intuitive folding
+nmap zj zR
+nmap zk zM
+nmap zl zO
+nmap zh zc
+nmap zH zC
 
 " tab navigation like firefox
 :nmap <C-S-tab> :tabprevious<CR>
@@ -78,45 +108,56 @@ vnoremap > >gv
 :nmap <C-t> :tabnew<CR>
 
 " change windows
-nmap <silent> <C-k> :wincmd k<CR>
-nmap <silent> <C-j> :wincmd j<CR>
-nmap <silent> <C-h> :wincmd h<CR>
-nmap <silent> <C-l> :wincmd l<CR>
+map <silent> <C-k> :wincmd k<CR>
+map <silent> <C-j> :wincmd j<CR>
+map <silent> <C-h> :wincmd h<CR>
+map <silent> <C-l> :wincmd l<CR>
+imap <silent> <C-k> <Esc>:wincmd k<CR>
+imap <silent> <C-j> <Esc>:wincmd j<CR>
+imap <silent> <C-h> <Esc>:wincmd h<CR>
+imap <silent> <C-l> <Esc>:wincmd l<CR>
 
-" new frame from window
-nmap <C-w>h :topleft  vnew<CR>
-nmap <C-w>l :botright vnew<CR>
-nmap <C-w>k :topleft  new<CR>
-nmap <C-w>j :botright new<CR>
+" new frame from window nmap <C-w>h :topleft  vnew<CR>
+map <C-w>h :topleft vnew<CR>
+map <C-w>l :botright vnew<CR>
+map <C-w>k :topleft  new<CR>
+map <C-w>j :botright new<CR>
+imap <C-w>h <Esc>:topleft vnew<CR>
+imap <C-w>l <Esc>:botright vnew<CR>
+imap <C-w>k <Esc>:topleft  new<CR>
+imap <C-w>j <Esc>:botright new<CR>
 
 " new frame from frame
-nmap <C-f>h :leftabove  vnew<CR>
-nmap <C-f>l :rightbelow vnew<CR>
-nmap <C-f>k :leftabove  new<CR>
-nmap <C-f>j :rightbelow new<CR>
+map <C-f>h :leftabove  vnew<CR>
+map <C-f>l :rightbelow vnew<CR>
+map <C-f>k :leftabove  new<CR>
+map <C-f>j :rightbelow new<CR>
+imap <C-f>h <Esc>:leftabove  vnew<CR>
+imap <C-f>l <Esc>:rightbelow vnew<CR>
+imap <C-f>k <Esc>:leftabove  new<CR>
+imap <C-f>j <Esc>:rightbelow new<CR>
 
-" resize windows
-nnoremap <silent> <C-Right> <C-w>><C-w>>
-nnoremap <silent> <C-Left> <C-w><lt><C-w><lt>
-nnoremap <silent> <C-Up> <C-w>-
-nnoremap <silent> <C-Down> <C-w>+
+" resize splits
+nnoremap <silent> <C-Right> <C-w>2>
+nnoremap <silent> <C-Left> <C-w>2<lt>
+nnoremap <silent> <C-Up> <C-w>2-
+nnoremap <silent> <C-Down> <C-w>2+
+" resize splits faster
+nnoremap <silent> <C-S-Right> <C-w>20>
+nnoremap <silent> <C-S-Left> <C-w>20<lt>
+nnoremap <silent> <C-S-Up> <C-w>20-
+nnoremap <silent> <C-S-Down> <C-w>20+
 
+" netrw
+nmap <Leader>o :o .<CR>
 
-" REPLACEMENTS FOR BROWSER-BASED SSH "
+" fixes for browser based ssh
 :nmap <Leader>t :tabnew<CR>
 :nmap <Leader>h :tabprevious<CR>
 :nmap <Leader>l :tabnext<CR>
 
-" equal-size windows
 :nmap <C-f>= <C-w>=
-" auto-complete
 :imap <C-,> <C-n>
-
-" visual block without pasting
-nnoremap <M-v> <C-v>
-
-
-" SETTINGS "
 
 "general
 set hidden
@@ -125,8 +166,6 @@ set virtualedit=onemore
 set nospell
 
 "ui
-set background=dark
-colorscheme wombat256mod
 set guifont=Consolas:h9:cANSI
 set showmode
 
@@ -157,24 +196,53 @@ set autoindent
 " syntax and folding
 syntax enable
 set pastetoggle=<F12>
-set foldmethod=syntax
+set foldmethod=indent
+set foldignore=
 
-"remove goddamn scrollbars
+" make folds match wombat256mod bg color
+hi Folded ctermbg=234
+
+"remove goddamn motha-fuckin scrollbars
 :setglobal guioptions-=L
 :setglobal guioptions-=l
 :setglobal guioptions-=R
 :setglobal guioptions-=r
 :setglobal guioptions-=b
 :setglobal guioptions-=h
-" I'm tired of these monkey fighting toolbars on this monday friday GUI
+"remove motha truckin toolbar
 :setglobal guioptions-=T
 
-" correctly interpret some file types
+" Remove trailing whitespace (on write)
+" autocmd BufWritePre * :%s/\s\+$//e
+function! EraseTrailingWhiteSpace()
+  if search('\s\+$', 'nw') != 0
+    %s/\s\+$//e
+    normal!``
+  endif
+endfunction
+autocmd BufWritePre * :call EraseTrailingWhiteSpace()
+
+" correctly interpret file types
 au BufNewFile,BufRead *.pde set filetype=c
 au BufNewFile,BufRead *.ino set filetype=c
 au BufNewFile,BufRead *.pic set filetype=ibasic
 au BufNewFile,BufRead *.bas set filetype=ibasic
 au BufNewFile,BufRead *.pbp set filetype=ibasic
+au BufNewFile,BufRead *.html set filetype=htmldjango
+
+" PLUGIN SPECIFIC
+nmap <Leader>cp :ConqueTerm python<CR>
+nmap <Leader>cb :ConqueTerm bash<CR>
+
+let g:ConqueTerm_ReadUnfocused = 1
+let g:ConqueTerm_InsertOnEnter = 1
+let g:ConqueTerm_CWInsert = 1
+" see conque term split?
+" note I did dirty stuff inside ConqueTerm for <C-hjkl> to work
+
+" language specific
+"au FileType python set foldmethod=indent
+"au FileType python set foldignore=
 
 " WINDOWS SPECIFIC
 " correctly format paths in windows
@@ -183,5 +251,7 @@ autocmd BufEnter * silent! lcd %:p:h:gs/ /\\ /
 nmap <Leader>rp :w<CR>:silent !start cmd /k python %<CR>:redraw!<CR>
 
 " LINUX SPECIFIC
-"save and run current file as python script in a new window with the VENV sourced
+"save and run current file as python script
+"nmap <Leader><Leader> :%
+"nmap <Leader>rc :w<CR>:ConqueTermVSplit bash -ic 'source ~/bootledger/venv/bin/activate; python -i %'<CR>
 nmap <Leader>rp :w<CR>:silent !gnome-terminal -e "bash -ic 'source ~/bootledger/venv/bin/activate; python -i %'" <CR>:redraw!<CR>
