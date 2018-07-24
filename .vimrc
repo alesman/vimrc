@@ -1,7 +1,17 @@
 "pfix colors in ubuntu
-set t_Co=256
 set background=dark
+set t_Co=256
 colorscheme wombat256mod
+
+" package manager
+execute pathogen#infect()
+
+
+"syntax enable
+"let g:solarized_termcolors=16
+"set t_Co=16
+"set background=dark
+"colorscheme solarized
 
 " experimental stuff:
 " statusline things
@@ -32,6 +42,8 @@ set statusline+=:%c  "Colnr
 set statusline+=\     "space
 "set statusline+=%P   "percentage thru file
 
+" yp to copy current file path to unnamed buffer
+nmap yp :let @" = expand("%:p")<CR>
 
 " attempt at a good reload all, not very good
 nmap <Leader>e :bufdo e<CR>:syntax on<CR>
@@ -42,6 +54,7 @@ nmap <Leader>s :syntax on<CR>
 " enter for newline w/out insert, <S-CR> does not work :(
 "nmap <CR> o<Esc>
 "nmap <S-CR> O<Esc>
+map Q @q
 
 " set leader key to space -> easiest key to hit!
 let mapleader=" "
@@ -50,7 +63,7 @@ let mapleader=" "
 imap jj <Esc>
 " quick save and quit in insert mode
 imap ZZ <Esc>:wq<CR>
-imap QQ <Esc>:bd<CR>
+" imap QQ <Esc>:bd<CR> " why would I need this?
 
 "quick save, force save, save all, save all and quit
 nmap <Leader>w :w<CR>
@@ -63,7 +76,7 @@ nmap <Leader>q :bd<CR>
 " close the window
 nmap <Leader>Q :q<CR>
 " close all windows
-nmap QQ :qa<CR>
+" nmap QQ :qa<CR> " maybe reinstate?
 
 " toggle numbers and paste mode
 nmap <Leader>n :set number!<CR>
@@ -250,8 +263,41 @@ autocmd BufEnter * silent! lcd %:p:h:gs/ /\\ /
 "save and run current file as python script
 nmap <Leader>rp :w<CR>:silent !start cmd /k python %<CR>:redraw!<CR>
 
+"save and run in haskell interpreter
+nmap <Leader>rh :w<CR>:silent !gnome-terminal -e "bash -ic 'ghci %:p'" <CR>:redraw!<CR>
+
+"save and run in node repl
+nmap <Leader>rn :w<CR>:silent !gnome-terminal -e "bash -ic '(echo -e \"require(\\\"util\\\").inspect.defaultOptions.depth = null;\n .load %:p\" && cat) \| node -i'" <CR>:redraw!<CR>
+"nmap <Leader>rn :w<CR>:silent !gnome-terminal -e "bash -ic '(echo -e \".load %:p\" && cat) \| node -i'" <CR>:redraw!<CR>
+
+
+
 " LINUX SPECIFIC
 "save and run current file as python script
 "nmap <Leader><Leader> :%
 "nmap <Leader>rc :w<CR>:ConqueTermVSplit bash -ic 'source ~/bootledger/venv/bin/activate; python -i %'<CR>
-nmap <Leader>rp :w<CR>:silent !gnome-terminal -e "bash -ic 'source ~/bootledger/venv/bin/activate; python -i %'" <CR>:redraw!<CR>
+
+
+
+nmap <Leader>rm :w<CR>:silent !gnome-terminal -e "bash -ic 'cd ~/data-layer/src/main/python/; source ../../../target/python-staging/venv/bin/activate; source ~/dev_env_config_env_vars.sh; python -i -m %:p:r;'" <CR>:redraw!<CR>
+
+nmap <Leader>rm :w<CR>:silent !gnome-terminal -e "bash -ic 'cd ~/data-layer/src/main/python/; source ~/dev_env_config_env_vars.sh; python -i -m %:p:r;'" <CR>:redraw!<CR>
+nmap <Leader>rbp :w<CR>:silent !gnome-terminal -e "bash -ic 'cd ~/data-layer/src/main/python/; source ~/prod_env_vars.sh; python -i -m %:p:r;'" <CR>:redraw!<CR>
+
+nmap <Leader>rt :w<CR>:silent !gnome-terminal -e "bash -ic 'cd ~/data-layer/src/main/python/; source ../../../target/python-staging/venv/bin/activate; source ~/dev_env_config_env_vars.sh; SKIP_PLATFORM_DEPENDENT_TESTS=TRUE python -i -m unittest discover -s tests;'" <CR>:redraw!<CR>
+
+nmap <Leader>rc :w<CR>:silent !gnome-terminal -e "bash -ic 'cd ~/bevcloud; source venv/bin/activate; python -i -m %:p:r;'" <CR>:redraw!<CR>
+
+nmap <Leader>fc :w<CR>:silent !cat % \| xclip -i -selection cliploard; <CR>:redraw!<CR>
+
+" grep under cursor
+"nmap <Leader>g "zyiwGA<CR>~~~~~~~~~~~~~~~~<CR>GREP - <ESC>"zp:lcd ~/data-layer<CR>:silent read !git grep <C-r>z<CR> :redraw!<CR>A<CR><ESC>
+
+" yank in word to z register, cd to data layer, grep for z register, store result to default paste register
+nmap <Leader>g "zyiw:lcd ~/data-layer<CR>:let @" = "\nGREP - ".@z."\n".system("git grep \"<C-r>z\"")<CR>
+" cd to data layer, grep for '/' register (which contains current search term), store result to default paste register
+nmap <Leader>G :lcd ~/data-layer<CR>:     let @" = "\nGREP - ".@/."\n".system("git grep \"<C-r>/\"")<CR>
+
+
+" open file name under cursor...
+nmap <Leader>fo B"zyt::leftabove  vnew<CR>:e ~/data-layer/<C-r>z<CR>
