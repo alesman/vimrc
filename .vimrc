@@ -4,8 +4,26 @@ set t_Co=256
 colorscheme wombat256mod
 
 " package manager
-execute pathogen#infect()
+" execute pathogen#infect()
 
+" fzf plugin
+" https://github.com/junegunn/fzf/blob/master/README-VIM.md
+" set rtp+=/usr/bin/fzf
+
+" Specify a directory for plugins
+" - For Neovim: stdpath('data') . '/plugged'
+" - Avoid using standard Vim directory names like 'plugin'
+call plug#begin('~/.vim/plugged')
+" Plug 'junegunn/fzf'
+Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
+
+
+" FOR SPECIFYING NVIM VS VIM OPTIONS
+if has('nvim')
+    " Neovim specific commands
+else
+    " Standard vim specific commands
+endif
 
 "syntax enable
 "let g:solarized_termcolors=16
@@ -162,7 +180,7 @@ nnoremap <silent> <C-S-Up> <C-w>20-
 nnoremap <silent> <C-S-Down> <C-w>20+
 
 " netrw
-nmap <Leader>o :o .<CR>
+nmap <Leader>o :e .<CR>
 
 " fixes for browser based ssh
 :nmap <Leader>t :tabnew<CR>
@@ -257,12 +275,13 @@ let g:ConqueTerm_CWInsert = 1
 "au FileType python set foldmethod=indent
 "au FileType python set foldignore=
 
+
 " WINDOWS SPECIFIC
 " correctly format paths in windows
 autocmd BufEnter * silent! lcd %:p:h:gs/ /\\ /
 "save and run current file as python script
 nmap <Leader>rp :w<CR>:silent !start cmd /k python %<CR>:redraw!<CR>
-
+"
 "save and run in haskell interpreter
 nmap <Leader>rh :w<CR>:silent !gnome-terminal -e "bash -ic 'ghci %:p'" <CR>:redraw!<CR>
 
@@ -278,26 +297,78 @@ nmap <Leader>rn :w<CR>:silent !gnome-terminal -e "bash -ic '(echo -e \"require(\
 "nmap <Leader>rc :w<CR>:ConqueTermVSplit bash -ic 'source ~/bootledger/venv/bin/activate; python -i %'<CR>
 
 
+function RunPython(env, python, option)
+    " save all files
+    execute 'wa'
 
-nmap <Leader>rm :w<CR>:silent !gnome-terminal -e "bash -ic 'cd ~/data-layer/src/main/python/; source ../../../target/python-staging/venv/bin/activate; source ~/dev_env_config_env_vars.sh; python -i -m %:p:r;'" <CR>:redraw!<CR>
+    let prefix = "silent !gnome-terminal -e \"bash -ic '"
 
-nmap <Leader>rm :w<CR>:silent !gnome-terminal -e "bash -ic 'cd ~/data-layer/src/main/python/; source ~/dev_env_config_env_vars.sh; python -i -m %:p:r;'" <CR>:redraw!<CR>
-nmap <Leader>rbp :w<CR>:silent !gnome-terminal -e "bash -ic 'cd ~/data-layer/src/main/python/; source ~/prod_env_vars.sh; python -i -m %:p:r;'" <CR>:redraw!<CR>
+    "let bash_cd_py_root = "cd ~/bevspot/data-layer/data-layer/src/main/python/;"
+    "let bash_source_venv = "source ../../../target/python-staging/venv/bin/activate;"
 
-nmap <Leader>rt :w<CR>:silent !gnome-terminal -e "bash -ic 'cd ~/data-layer/src/main/python/; source ../../../target/python-staging/venv/bin/activate; source ~/dev_env_config_env_vars.sh; SKIP_PLATFORM_DEPENDENT_TESTS=TRUE python -i -m unittest discover -s tests;'" <CR>:redraw!<CR>
 
+    " let bash_source_config_vars = ""
+    " let bash_command = ""
+
+    if a:env == "bevspot_dev"
+        let bash_cd_py_root = "cd ~/bevspot/data-layer/data-layer/target/python-staging;"
+        let bash_source_venv = "source venv/bin/activate;"
+        let bash_source_config_vars = "source ~/bevspot/dev_env_config_env_vars.sh;"
+    elseif a:env == "bevspot_stage"
+        let bash_cd_py_root = "cd ~/bevspot/data-layer/data-layer/target/python-staging;"
+        let bash_source_venv = "source venv/bin/activate;"
+        let bash_source_config_vars = "source ~/bevspot/stage_env_config_env_vars.sh;"
+    elseif a:env == "bevspot_prod"
+        let bash_cd_py_root = "cd ~/bevspot/data-layer/data-layer/target/python-staging;"
+        let bash_source_venv = "source venv/bin/activate;"
+        let bash_source_config_vars = "source ~/bevspot/prod_env_config_env_vars.sh;"
+    else
+        let bash_cd_py_root = ""
+        let bash_source_venv = ""
+        let bash_source_config_vars = ""
+    endif
+
+    if a:option == "run_all_tests"
+        let bash_command = a:python . " -i -m unittest discover -s tests;"
+    elseif a:option == "run_as_module"
+        let bash_command = a:python . " -i -m " . expand("%:p:r") . ";"
+    elseif a:option == "run_as_script"
+        let bash_command = a:python . " -i " . expand("%:p") . ";"
+    endif
+
+    let postfix = "'\""
+    " let what_do = "<CR>:redraw!<CR>"
+
+    let result = prefix . bash_cd_py_root . bash_source_venv . bash_source_config_vars . bash_command . postfix
+    echo result
+    execute result
+endfunction
+
+nmap <Leader>rp :call RunPython("none", "python3", "run_as_script")<CR>
+nmap <Leader>rt :call RunPython("bevspot_dev", "python", "run_all_tests")<CR>
+nmap <Leader>rm :call RunPython("bevspot_dev", "python", "run_as_module")<CR>
+nmap <Leader>rbs :call RunPython("bevspot_stage", "python", "run_as_module")<CR>
+nmap <Leader>rbp :call RunPython("bevspot_prod", "python", "run_as_module")<CR>
+
+
+" nmap <Leader>rbp :w<CR>:silent !gnome-terminal -e "bash -ic 'cd ~/data-layer/src/main/python/; source ~/prod_env_vars.sh; python -i -m %:p:r;'" <CR>:redraw!<CR>
 nmap <Leader>rc :w<CR>:silent !gnome-terminal -e "bash -ic 'cd ~/bevcloud; source venv/bin/activate; python -i -m %:p:r;'" <CR>:redraw!<CR>
 
-nmap <Leader>fc :w<CR>:silent !cat % \| xclip -i -selection cliploard; <CR>:redraw!<CR>
+" nmap <Leader>fc :w<CR>:silent !cat % \| xclip -i -selection cliploard; <CR>:redraw!<CR>
 
 " grep under cursor
 "nmap <Leader>g "zyiwGA<CR>~~~~~~~~~~~~~~~~<CR>GREP - <ESC>"zp:lcd ~/data-layer<CR>:silent read !git grep <C-r>z<CR> :redraw!<CR>A<CR><ESC>
 
 " yank in word to z register, cd to data layer, grep for z register, store result to default paste register
-nmap <Leader>g "zyiw:lcd ~/data-layer<CR>:let @" = "\nGREP - ".@z."\n".system("git grep \"<C-r>z\"")<CR>
+nmap <Leader>g "zyiw:lcd ~/bevspot/data-layer<CR>:let @" = "\nGREP - ".@z."\n".system("git grep \"<C-r>z\"")<CR>
 " cd to data layer, grep for '/' register (which contains current search term), store result to default paste register
-nmap <Leader>G :lcd ~/data-layer<CR>:     let @" = "\nGREP - ".@/."\n".system("git grep \"<C-r>/\"")<CR>
+nmap <Leader>G :lcd ~/bevspot/data-layer<CR>:     let @" = "\nGREP - ".@/."\n".system("git grep \"<C-r>/\"")<CR>
 
 
 " open file name under cursor...
-nmap <Leader>fo B"zyt::leftabove  vnew<CR>:e ~/data-layer/<C-r>z<CR>
+nmap <Leader>fo B"zyt::leftabove  vnew<CR>:e ~/bevspot/data-layer/<C-r>z<CR>
+
+nmap <Leader>c "+y
+vmap <Leader>c "+y
+
+" Plugin 'tpope/vim-surround'

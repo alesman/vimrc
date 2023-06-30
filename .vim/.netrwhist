@@ -1,2 +1,12 @@
 let g:netrw_dirhistmax  =10
-let g:netrw_dirhist_cnt =0
+let g:netrw_dirhistcnt =7
+let g:netrw_dirhist_7='/home/alex/bevspot/data-layer/data-layer/src/main/python'
+let g:netrw_dirhist_6='/home/alex/bevspot/data-layer/data-layer/src/main/python/tests/unit'
+let g:netrw_dirhist_5='/home/alex/bevspot/data-layer/data-layer/src/main/python/tests'
+let g:netrw_dirhist_4='/home/alex/bevspot/data-layer/data-layer/src/main/python'
+let g:netrw_dirhist_3='/home/alex/bevspot/data-layer/data-layer/src/main/python/product_distributor_service'
+let g:netrw_dirhist_2='/home/alex/bevspot/data-layer/data-layer/src/main/python/product_distributor_service/impl'
+let g:netrw_dirhist_1='/home/alex/bevspot/data-layer/data-layer/src/main/python/product_distributor_service'
+let g:netrw_dirhist_0='/home/alex/bevspot/data-layer/data-layer/src/main/python'
+let g:netrw_dirhist_9='/home/alex/bevspot/data-layer/data-layer/target/python-staging/platform_api'
+let g:netrw_dirhist_8='/home/alex/bevspot/data-layer/data-layer/src/main/python'
